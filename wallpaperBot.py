@@ -89,7 +89,6 @@ if response.status_code == 200:
     send_photo_with_message(image_url['small'], escape_markdown(msg))
     send_doc('regular', image_description, image_url)
     send_doc('full', image_description, image_url)
-    send_doc('raw', image_description, image_url)
 else:
     print('Request failed:', response.status_code)
     print('Request failed:', response.text)
