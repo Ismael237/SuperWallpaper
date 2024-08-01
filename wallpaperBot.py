@@ -6,7 +6,7 @@ from os import getenv
 from random import choice
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(dotenv_path='.env')
 
 UNSPLASH_CLIENT_ID = getenv('UNSPLASH_CLIENT_ID')
 TELEGRAM_BOT_TOKEN = getenv('TELEGRAM_BOT_TOKEN')
@@ -62,6 +62,12 @@ def transform_to_camel_case(phrase):
     camel_case_phrase = ''.join(capitalized_words)
     return camel_case_phrase
 
+def escape_markdown(text):
+    escape_chars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+    for char in escape_chars:
+        text = text.replace(char, f'\\{char}')
+    return text
+
 theme_keyword = get_random_theme_keyword()
 camel_theme_keyword = transform_to_camel_case(theme_keyword)
 
@@ -74,14 +80,9 @@ if response.status_code == 200:
     image_location = image['location']['name']
     image_author = image['user']['name']
     
-    msg = f'''Name: *{image_description.title()}*
-            \n\nLocation: *{image_location}*
-            \n\nAuthor: *{image_author}*
-            \n\n{'#'+camel_theme_keyword} {'#'+camel_theme_keyword+'Wallpaper'} #Wallpaper #DailyWallpaper
-            #HDWallpaper #WallpaperOfTheDay #FollowForMore #LikeAndShare
-            '''
+    msg = f'''Name: *{image_description.title()}*\n\nLocation: *{image_location}*\n\nAuthor: *{image_author}*\n\n{'#'+camel_theme_keyword} {'#'+camel_theme_keyword+'Wallpaper'} #Wallpaper #DailyWallpaper #HDWallpaper #WallpaperOfTheDay #FollowForMore #LikeAndShare'''
     
-    send_photo_with_message(image_url['small'], msg)
+    send_photo_with_message(image_url['small'], escape_markdown(msg))
     send_doc('regular', image_description, image_url)
     send_doc('full', image_description, image_url)
     send_doc('raw', image_description, image_url)
