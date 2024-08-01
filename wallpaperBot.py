@@ -6,7 +6,12 @@ from os import getenv
 from random import choice
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path='.env')
+ENVIRONMENT = getenv('ENVIRONMENT')
+
+if ENVIRONMENT == 'development':
+    load_dotenv(dotenv_path='.env')
+else:
+    load_dotenv()
 
 UNSPLASH_CLIENT_ID = getenv('UNSPLASH_CLIENT_ID')
 TELEGRAM_BOT_TOKEN = getenv('TELEGRAM_BOT_TOKEN')
@@ -14,7 +19,6 @@ TELEGRAM_CHAT_ID = getenv('TELEGRAM_CHAT_ID')
 
 BASE_UNSPLASH_API_URL =f'https://api.unsplash.com/photos/random?client_id={UNSPLASH_CLIENT_ID}&query='
 BASE_TELEGRAM_API_URL='https://api.telegram.org/bot'
-
 
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN, parse_mode='MarkdownV2')
 
@@ -28,7 +32,7 @@ def send_photo_with_message(image_url, message):
         }
     ]
     data = {
-        'TELEGRAM_CHAT_ID': TELEGRAM_CHAT_ID,
+        'chat_id': TELEGRAM_CHAT_ID,
         'message_id': message_id,
         'reaction': json.dumps(reaction)
     }
@@ -63,7 +67,7 @@ def transform_to_camel_case(phrase):
     return camel_case_phrase
 
 def escape_markdown(text):
-    escape_chars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+    escape_chars = ['#']
     for char in escape_chars:
         text = text.replace(char, f'\\{char}')
     return text
